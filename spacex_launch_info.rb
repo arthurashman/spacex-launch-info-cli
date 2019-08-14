@@ -1,5 +1,6 @@
 require 'httparty'
 require 'colorize'
+require 'fileutils'
 
 def title(content)
   puts ""
@@ -36,8 +37,13 @@ until (launch_year > 2005 && launch_year <= Time.now.year)
   launch_year = gets.chomp.to_i
 end
 
+unless File.directory?("api_call_logs")
+  FileUtils.mkdir_p("api_call_logs")
+end
+
 response = HTTParty.get("https://api.spacexdata.com/v2/launches?launch_year=#{launch_year}&rocket_id=#{selected_rocket}")
 File.write("api_call_logs/spacex-api-call-#{Time.now}.log", "Request made at #{Time.now}, and api responded in #{response.response["spacex-api-response-time"]}")
+
 
 while response.empty? && launch_year != 0
   puts "It looks like there were no launches that year. Do you want to try again? Type 0 to exit"
