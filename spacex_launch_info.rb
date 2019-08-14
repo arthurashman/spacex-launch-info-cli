@@ -9,10 +9,6 @@ def title(content)
   puts ""
 end
 
-if File.exists?("spacex-api-call.log")
-  File.delete("spacex-api-call.log")
-end
-
 title("Welcome to SpaceX Launch Info")
 
 rockets = HTTParty.get("https://api.spacexdata.com/v2/rockets").map {|rocket| rocket["id"]}
@@ -42,7 +38,6 @@ end
 
 response = HTTParty.get("https://api.spacexdata.com/v2/launches?launch_year=#{launch_year}&rocket_id=#{selected_rocket}")
 File.write("api_call_logs/spacex-api-call-#{Time.now}.log", "Request made at #{Time.now}, and api responded in #{response.response["spacex-api-response-time"]}")
-
 
 while response.empty? && launch_year != 0
   puts "It looks like there were no launches that year. Do you want to try again? Type 0 to exit"
